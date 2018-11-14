@@ -1,5 +1,6 @@
 package com.example.user.myapplication123;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -59,54 +60,59 @@ public class MainActivity1 extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void runAsyncTask(){
-        new AsyncTask<Void,Integer,Boolean>(){
+        AsyncTask<Void, Integer, Boolean> execute = new AsyncTask<Void, Integer, Boolean>() {
             private ProgressDialog dialog = new ProgressDialog(MainActivity1.this);
+
             @Override
-            protected  void onPreExecute(){
+            protected void onPreExecute() {
                 super.onPreExecute();
                 dialog.setMessage("calculating...");
                 dialog.setCancelable(false);
                 dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 dialog.show();
             }
+
             @Override
-            protected Boolean doInBackground(Void...voids){
-                int progress =0;
-                while (progress <= 100){
+            protected Boolean doInBackground(Void... voids) {
+                int progress = 0;
+                while (progress <= 100) {
                     try {
                         Thread.sleep(50);
                         publishProgress(Integer.valueOf(progress));
                         progress++;
-                    }catch (InterruptedException e){
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
                 return true;
             }
+
             @Override
-            protected void onProgressUpdate(Integer...values){
+            protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
                 dialog.setProgress(values[0]);
             }
-            @Override
-            protected void onPostExecute(Boolean status){
-                dialog.dismiss();
-                double cal_t=Double.parseDouble(tall.getText().toString());
-                double cal_w=Double.parseDouble(weight.getText().toString());
-                double cal_s=0;
-                double cal_b=0;
 
-                if(gender ==1){
-                    cal_s =22*cal_t/100*cal_t/100;
-                    cal_b=(cal_w-(0.88*cal_s))/cal_w*100;
+            @Override
+            protected void onPostExecute(Boolean status) {
+                dialog.dismiss();
+                double cal_t = Double.parseDouble(tall.getText().toString());
+                double cal_w = Double.parseDouble(weight.getText().toString());
+                double cal_s = 0;
+                double cal_b = 0;
+
+                if (gender == 1) {
+                    cal_s = 22 * cal_t / 100 * cal_t / 100;
+                    cal_b = (cal_w - (0.88 * cal_s)) / cal_w * 100;
                 }
-                if(gender==2){
-                    cal_s =22*cal_t/100*cal_t/100;
-                    cal_b = (cal_w-(0.82*cal_s))/cal_w*100;
+                if (gender == 2) {
+                    cal_s = 22 * cal_t / 100 * cal_t / 100;
+                    cal_b = (cal_w - (0.82 * cal_s)) / cal_w * 100;
                 }
-                standardWeight.setText(String.format("%2.f",cal_s));
-                bodyFat.setText(String.format("%2.f",cal_b));
+                standardWeight.setText(String.format("%.2f", cal_s));
+                bodyFat.setText(String.format("%.2f", cal_b));
             }
         }.execute();
     }
